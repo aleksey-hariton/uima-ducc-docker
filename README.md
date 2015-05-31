@@ -10,7 +10,7 @@
 - [x] Run simple UIMA job (from samples) which will be distributed across several agent nodes
 - [ ] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
 - [x] Cluster should support automatic detection of agent addition/removal
-- [ ] Implement autoscaling based on currently running jobs (when there is starvation of memory shares - add more nodes; remove nodes when there are no jobs running)
+- [x] Implement autoscaling based on currently running jobs (when there is starvation of memory shares - add more nodes; remove nodes when there are no jobs running)
 - [ ] Propose testing solution for containers, write some tests for this infrastructure
  
 **Documentation**
@@ -20,25 +20,6 @@
 ## Architecture high-level design
 
 *img of arch*
-
-## Support multi-user mode with duccling
-
-If you want use more secure service with DUCC, you can enable DUCC web interface authorization (based on container system users):
-
-* Login to **head** node and change *ducc.properties* file and enable **ducc.ws.login.enabled** option:
-```bash
-ssh -p 2222 -i res/id_rsa root@localhost
-cd /home/ducc/apache-uima-ducc/resources/ducc.properties
-# ducc.ws.login.enabled = false
-ducc.ws.login.enabled = true
-```
-* Now create new user on **head** node and all **agent** nodes:
-```bash
-useradd -m newuser -s /bin/bash
-passwd newuser
-```
-
-Now you can use **Login** link in web interface and all your jobs will be submited by newly created user.
 
 ## User guides
 
@@ -132,4 +113,69 @@ cd /home/ducc/apache-uima-ducc/bin/
 You can check [**Jobs**](http://localhost:42133/jobs.jsp) section of DUCC web interface or check [**Viz**](http://localhost:42133/viz.jsp) section for visualisation where your job placed.
 
 Please note that results will be placed into */tmp/res/* folder of **head** container, which equal to local folder *./results/* of this repository.
+
+## Cluster autoscaling
+
+Cluster auto scaling implemented with Docker compose and script **cluster_scale.sh**.
+Before you run, change in script values:
+* **THRESHOLD** - cluster utilization in %, after which script will start new agent node
+* **SLEEP** - time in seconds between status update
+* **DOCKER_COMPOSE** - path to *docker-compose* binary or set to **docker-compose** if i in $PATH
+
+```bash
+./cluster_scale.sh
+```
+
+Each $SLEEP seconds (10 by default) script will show status:
+
+```
+11:51:58 Cluster utilization: 3.3%; Active agent nodes: 1; Active jobs: 0
+```
+
+And if any action needed it will show messages like this:
+
+```
+ACTION: Increasing count of agents to 1 + 1 and sleep for a minute
+```
+
+If more nodes required or:
+
+```
+ACTION: No active jobs for the moment, so shutdowning all agents
+```
+
+if no active jobs left and script killall agent nodes.
+
+## Support multi-user mode with duccling
+
+If you want use more secure service with DUCC, you can enable DUCC web interface authorization (based on container system users):
+
+* Login to **head** node and change *ducc.properties* file and enable **ducc.ws.login.enabled** option:
+```bash
+ssh -p 2222 -i res/id_rsa root@localhost
+cd /home/ducc/apache-uima-ducc/resources/
+vi ducc.properties
+
+
+# ducc.ws.login.enabled = false
+ducc.ws.login.enabled = true
+```
+* Now create new user on **head** node and all **agent** nodes:
+```bash
+useradd -m newuser -s /bin/bash
+passwd newuser
+```
+
+Now you can use **Login** link in web interface and all your jobs will be submited by newly created user.
+
+## Configuring of additional node pools
+
+For more information please visit ["DUUC book"](http://uima.apache.org/d/uima-ducc-1.0.0/duccbook.html#x1-18800012.3)
+
+To specify new nodepool change file **resources/ducc.classes** on **head** node.
+Insert you changes after *default* nodepool defenition.
+
+```json
+Nodepool --default--  { }
+```
 
