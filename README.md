@@ -104,7 +104,7 @@ and run *docker-compose up -d*.
 You can place your jobs into ./jobs/ folder (*/tmp/jobs/* in **head** container) or use example provided with DUCC distro.
 Login to **head** container and submit new job:
 
-```bash session
+```shell
 ssh -p 2222 -i res/id_rsa root@localhost
 cd /home/ducc/apache-uima-ducc/bin/
 ./ducc_submit -f ../examples/simple/1.job --log_directory /tmp/res/ --working_directory /tmp/res/
