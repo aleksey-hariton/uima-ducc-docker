@@ -1,5 +1,7 @@
 # uima-ducc-docker
 
+This project help you to setup UIMA DUCC cluster locally with Docker
+
 ## Finished tasks
 
 **Check points**
@@ -8,24 +10,79 @@
 - [x] Support multi-user mode with duccling
 - [x] Script to spin up cluster with arbitrary configuration (docker-compose preferably or bash)
 - [x] Run simple UIMA job (from samples) which will be distributed across several agent nodes
-- [ ] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
+- [x] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
 - [x] Cluster should support automatic detection of agent addition/removal
 - [x] Implement autoscaling based on currently running jobs (when there is starvation of memory shares - add more nodes; remove nodes when there are no jobs running)
 - [ ] Propose testing solution for containers, write some tests for this infrastructure
  
 **Documentation**
-- [ ] Architecture high-level design
+- [x] Architecture high-level design
 - [x] User guides (how to bootstrap cluster, how to modify configuration, how to run jobs, how autoscaling works)
 
 ## Architecture high-level design
 
-*img of arch*
+**Attention!** in this doc doents describes DUCC architecture, only for clustering solution. For more information about UIMA DUCC arch look at ["UIMA DUCC book"](http://uima.apache.org/d/uima-ducc-1.0.0/duccbook.html#x1-70001.1).
 
-## User guides
+Diagram of solution architecture:
 
-This project help you to setup UIMA DUCC cluster locally with Docker
+![alt tag](https://raw.githubusercontent.com/aleksey-hariton/uima-ducc-docker/master/res/arch.png)
 
-### Prerequisites
+* **head** - master node in DUCC UIMA cluster
+* **agentN** - agent node in DUCC UIMA cluster
+* **./jobs/** - shared folder between **head** node and host node for jobs
+* **./results/** - shared folder between **head** node and host node for jobs results
+* **:2222** - exposed SSH port to get access to **head** via SSH
+* **:42133, :42155** - exposed port to get access to DUCC cluster web interface
+* **run.sh** - script for preparation of **head** and **agent** nodes. On agent node script also automaically (based on its *hosts* file, change by Docker --link option) determines **head** node, adding itself to head's hosts file and ducc.nodes file and start agent from **head** node.
+* **cluster_scale.sh** - scipt for cluster auto scaling, for more information please look at **Cluster autoscaling** section of this guide
+
+**File list**
+
+```bash
+# head node files
+./ducc-head
+# run script (CMD) for head
+./ducc-head/run.sh
+# Docker doesnt support symlincs for COPY/ADD so archives placed here. Initialy was used 'wget' but it's too slow for testing purposes
+./ducc-head/uima-ducc-1.1.0-bin.tar.gz
+# Public and private keys (should be the same for head and agent)
+./ducc-head/id_rsa
+./ducc-head/id_rsa.pub
+# Dockerfile
+./ducc-head/Dockerfile
+
+# agent node files
+./ducc-agent
+# run script (CMD) for agent
+./ducc-agent/run.sh
+# see above
+./ducc-agent/uima-ducc-1.1.0-bin.tar.gz
+# Public and private keys (should be the same for head and agent)
+./ducc-agent/id_rsa
+./ducc-agent/id_rsa.pub
+# Dockerfile
+./ducc-agent/Dockerfile
+
+
+# Resources for documentation
+./res
+./res/arch.png
+./res/arch.graphml
+
+# jobs and results folders (mounted to head container)
+./jobs
+./results
+
+
+# Sample config for docker-compose
+./docker-compose.yml
+
+# Cluster auto-scale script
+./cluster_scale.sh
+```
+
+
+## Prerequisites
 
 * Install Docker - https://docs.docker.com/installation/#installation
 * Install Docker Compose (not mandatory) - https://docs.docker.com/compose/install/#install-compose
@@ -38,7 +95,7 @@ git clone https://github.com/aleksey-hariton/uima-ducc-docker.git
 
 And use simple Docker or Docker compose instructions
 
-### How to bootstrap cluster with Docker
+## How to bootstrap cluster with Docker
 
 To bootstrap new DUCC cluster with pure Docker:
 * Build **ducc-head** and **ducc-agent** images:
@@ -58,7 +115,7 @@ docker run -t -i -d --name agent1 ducc-agent
 
 If you want to add new agent nodes, just repeat step 3.
 
-### How to bootstrap cluster with Docker-compose
+## How to bootstrap cluster with Docker-compose
 
 First of all ensure that you have installed docker-compose (check *Prerequisites* section of this doc).
 
@@ -99,7 +156,7 @@ agent2:
 
 and run *docker-compose up -d*.
 
-### How to run jobs
+## How to run jobs
 
 You can place your jobs into ./jobs/ folder (*/tmp/jobs/* in **head** container) or use example provided with DUCC distro.
 Login to **head** container and submit new job:
@@ -170,7 +227,7 @@ Now you can use **Login** link in web interface and all your jobs will be submit
 
 ## Configuring of additional node pools
 
-For more information please visit ["DUUC book"](http://uima.apache.org/d/uima-ducc-1.0.0/duccbook.html#x1-18800012.3)
+For more information please visit ["DUCC book"](http://uima.apache.org/d/uima-ducc-1.0.0/duccbook.html#x1-18800012.3)
 
 To specify new nodepool change file **resources/ducc.classes** on **head** node.
 Insert you changes after *default* nodepool defenition.
