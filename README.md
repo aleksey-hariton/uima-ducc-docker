@@ -2,20 +2,20 @@
 
 ## Finished tasks
 
-*Check points*
-[x] Container for DUCC (follow best practices for Docker build file)
-[ ] Data persistence for experiment results and logs (after DUCC agent removal)
-[ ] Support multi-user mode with duccling
-[x] Script to spin up cluster with arbitrary configuration (docker-compose preferably or bash)
-[x] Run simple UIMA job (from samples) which will be distributed across several agent nodes
-[ ] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
-[x] Cluster should support automatic detection of agent addition/removal
-[ ] Implement autoscaling based on currently running jobs (when there is starvation of memory shares - add more nodes; remove nodes when there are no jobs running)
-[ ] Propose testing solution for containers, write some tests for this infrastructure
+**Check points**
+- [x] Container for DUCC (follow best practices for Docker build file)
+- [ ] Data persistence for experiment results and logs (after DUCC agent removal)
+- [ ] Support multi-user mode with duccling
+- [x] Script to spin up cluster with arbitrary configuration (docker-compose preferably or bash)
+- [x] Run simple UIMA job (from samples) which will be distributed across several agent nodes
+- [ ] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
+- [x] Cluster should support automatic detection of agent addition/removal
+- [ ] Implement autoscaling based on currently running jobs (when there is starvation of memory shares - add more nodes; remove nodes when there are no jobs running)
+- [ ] Propose testing solution for containers, write some tests for this infrastructure
  
-*Documentation*
-[ ] Architecture high-level design
-[x] User guides (how to bootstrap cluster, how to modify configuration, how to run jobs, how autoscaling works)
+**Documentation**
+- [ ] Architecture high-level design
+- [x] User guides (how to bootstrap cluster, how to modify configuration, how to run jobs, how autoscaling works)
 
 ## Architecture high-level design
 
