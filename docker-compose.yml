@@ -1,0 +1,10 @@
+head:
+  build: ./ducc-head/
+  ports:
+   - "42133:42133"
+   - "42155:42155"
+   - "2222:22"
+agent:
+  links:
+   - head
+  build: ./ducc-agent/
