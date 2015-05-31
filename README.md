@@ -4,8 +4,8 @@
 
 **Check points**
 - [x] Container for DUCC (follow best practices for Docker build file)
-- [ ] Data persistence for experiment results and logs (after DUCC agent removal)
-- [ ] Support multi-user mode with duccling
+- [x] Data persistence for experiment results and logs (after DUCC agent removal)
+- [x] Support multi-user mode with duccling
 - [x] Script to spin up cluster with arbitrary configuration (docker-compose preferably or bash)
 - [x] Run simple UIMA job (from samples) which will be distributed across several agent nodes
 - [ ] Configure 3 agent node pools (compute-optimized, memory-optimized, general-use).
@@ -21,6 +21,24 @@
 
 *img of arch*
 
+## Support multi-user mode with duccling
+
+If you want use more secure service with DUCC, you can enable DUCC web interface authorization (based on container system users):
+
+* Login to **head** node and change *ducc.properties* file and enable **ducc.ws.login.enabled** option:
+```bash
+ssh -p 2222 -i res/id_rsa root@localhost
+cd /home/ducc/apache-uima-ducc/resources/ducc.properties
+# ducc.ws.login.enabled = false
+ducc.ws.login.enabled = true
+```
+* Now create new user on **head** node and all **agent** nodes:
+```bash
+useradd -m newuser -s /bin/bash
+passwd newuser
+```
+
+Now you can use **Login** link in web interface and all your jobs will be submited by newly created user.
 
 ## User guides
 
@@ -66,6 +84,7 @@ First of all ensure that you have installed docker-compose (check *Prerequisites
 For cluster spin-up just run two commands:
 
 ```shell
+docker-compose build
 docker-compose up -d
 ```
 
@@ -77,7 +96,7 @@ To increase count of agent nodes up to 3, run folowing command:
 docker-compose scale agent=3
 ```
 
-*OR*
+**OR**
 
 you can just change **docker-compose.yml** file to have pre-configured cluster setup:
 
@@ -112,4 +131,5 @@ cd /home/ducc/apache-uima-ducc/bin/
 
 You can check [**Jobs**](http://localhost:42133/jobs.jsp) section of DUCC web interface or check [**Viz**](http://localhost:42133/viz.jsp) section for visualisation where your job placed.
 
-Please note that results will be placed into /tmp/res/ folder of **head** container, which equal to local folder ./results/ of this repository.
+Please note that results will be placed into */tmp/res/* folder of **head** container, which equal to local folder *./results/* of this repository.
+
