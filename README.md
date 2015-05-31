@@ -33,7 +33,7 @@ This project help you to setup UIMA DUCC cluster locally with Docker
 
 Clone this repository to your PC:
 
-```bash
+```shell
 git clone https://github.com/aleksey-hariton/uima-ducc-docker.git
 ```
 
@@ -43,16 +43,16 @@ And use simple Docker or Docker compose instructions
 
 To bootstrap new DUCC cluster with pure Docker:
 * Build **ducc-head** and **ducc-agent** images:
-```bash
+```shell
 docker build -t ducc-head ducc-head/
 docker build -t ducc-agent ducc-agent/
 ```
 * Run one *head* server:
-```bash
+```shell
 docker run -t -i -p 42133:42133 -p 42155:42155 -p 2222:22 -d --name head ducc-head
 ```
 * Then run as much *agent* servers as you wish, all new agent nodes (agent1, agent2... etc.) will be added to cluster automatically:
-```bash
+```shell
 docker run -t -i -d --name agent1 ducc-agent
 ```
 * Go to http://localhost:42133/ to open web interface of your new UIMA DUCC cluster
@@ -65,7 +65,7 @@ First of all ensure that you have installed docker-compose (check *Prerequisites
 
 For cluster spin-up just run two commands:
 
-```bash
+```shell
 docker-compose up -d
 ```
 
@@ -73,7 +73,7 @@ This command will setup one DUCC head node and one agent node (you will have 2 a
 
 To increase count of agent nodes up to 3, run folowing command:
 
-```bash
+```shell
 docker-compose scale agent=3
 ```
 
@@ -102,6 +102,6 @@ agent2:
   build: ./ducc-agent/
 ```
 
-and run **docker-compose up -d**.
+and run *docker-compose up -d*.
 
 ### How to run jobs
