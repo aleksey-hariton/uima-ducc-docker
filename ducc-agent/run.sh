@@ -35,7 +35,8 @@ su - ducc -c "/home/ducc/apache-uima-ducc/admin/check_ducc"
 host=`hostname -f`
 ip=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
 su - ducc -c "ssh root@$head 'echo $ip $host >> /etc/hosts'"
-su - ducc -c "ssh $head 'echo \"\\n$host\" >> /home/ducc/apache-uima-ducc/resources/ducc.nodes'"
+su - ducc -c "ssh $head 'echo \"\" >> /home/ducc/apache-uima-ducc/resources/ducc.nodes'"
+su - ducc -c "ssh $head 'echo \"$host\" >> /home/ducc/apache-uima-ducc/resources/ducc.nodes'"
 su - ducc -c "ssh $head '/home/ducc/apache-uima-ducc/admin/start_ducc'"
 
 # Daemonize Docker container

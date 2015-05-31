@@ -49,7 +49,7 @@ docker build -t ducc-agent ducc-agent/
 ```
 * Run one *head* server:
 ```shell
-docker run -t -i -p 42133:42133 -p 42155:42155 -p 2222:22 -d --name head ducc-head
+docker run -t -i -p 42133:42133 -p 42155:42155 -p 2222:22 -v $(pwd)/results/:/tmp/res/ -v $(pwd)/jobs/:/tmp/jobs/ -d --name head ducc-head
 ```
 * Then run as much *agent* servers as you wish, all new agent nodes (agent1, agent2... etc.) will be added to cluster automatically:
 ```shell
@@ -82,12 +82,7 @@ docker-compose scale agent=3
 you can just change **docker-compose.yml** file to have pre-configured cluster setup:
 
 ```yaml
-head:
-  build: ./ducc-head/
-  ports:
-   - "42133:42133"
-   - "42155:42155"
-   - "2222:22"
+...
 agent:
   links:
    - head
@@ -105,3 +100,16 @@ agent2:
 and run *docker-compose up -d*.
 
 ### How to run jobs
+
+You can place your jobs into ./jobs/ folder (*/tmp/jobs/* in **head** container) or use example provided with DUCC distro.
+Login to **head** container and submit new job:
+
+```bash session
+ssh -p 2222 -i res/id_rsa root@localhost
+cd /home/ducc/apache-uima-ducc/bin/
+./ducc_submit -f ../examples/simple/1.job --log_directory /tmp/res/ --working_directory /tmp/res/
+```
+
+You can check [**Jobs**](http://localhost:42133/jobs.jsp) section of DUCC web interface or check [**Viz**](http://localhost:42133/viz.jsp) section for visualisation where your job placed.
+
+Please note that results will be placed into /tmp/res/ folder of **head** container, which equal to local folder ./results/ of this repository.

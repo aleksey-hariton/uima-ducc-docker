@@ -20,6 +20,7 @@ rm -Rf /home/ducc/apache-uima-ducc-1.1.0/
 
 cd /home/ducc/apache-uima-ducc/admin/ && /home/ducc/apache-uima-ducc/admin/ducc_post_install
 chown ducc.ducc -Rf /home/ducc/
+chown ducc.ducc -Rf /tmp/res/
 
 # Prepare ducc_ling file
 chown root.ducc /home/ducc/apache-uima-ducc/admin/ducc_ling

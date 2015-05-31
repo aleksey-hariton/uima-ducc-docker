@@ -4,6 +4,9 @@ head:
    - "42133:42133"
    - "42155:42155"
    - "2222:22"
+  volumes:
+   - results/:/tmp/res
+   - jobs/:/tmp/jobs
 agent:
   links:
    - head

@@ -15,7 +15,7 @@ COPY ./id_rsa* /home/ducc/.ssh/
 COPY ./uima-ducc-1.1.0-bin.tar.gz /home/ducc/
 COPY ./run.sh /home/ducc/apache-uima-ducc/
 
-VOLUME /mnt
+# VOLUME ./results/:/mnt
 
 USER root
 CMD /home/ducc/apache-uima-ducc/run.sh
